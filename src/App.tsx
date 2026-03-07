@@ -603,7 +603,7 @@ const ShowcaseSection = () => (
             <div className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-lg">
               <Play size={20} className="text-lg-red" />
             </div>
-            <h3 className="text-xl md:text-2xl font-bold">Strategy Videos</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-zinc-300">Strategy Videos</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {ASSETS.filter(a => a.type === 'video').map(asset => (
@@ -618,7 +618,7 @@ const ShowcaseSection = () => (
             <div className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-lg">
               <Quote size={20} className="text-lg-red" />
             </div>
-            <h3 className="text-xl md:text-2xl font-bold">Leader's Philosophy Tracks</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-zinc-300">Leader's Philosophy Tracks</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {ASSETS.filter(a => a.type === 'audio').map(asset => (
@@ -634,7 +634,7 @@ const ShowcaseSection = () => (
               <div className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-lg">
                 <Brain size={20} className="text-lg-red" />
               </div>
-              <h3 className="text-xl md:text-2xl font-bold">Vision Boards</h3>
+              <h3 className="text-xl md:text-2xl font-bold text-zinc-300">Vision Boards</h3>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {ASSETS.filter(a => a.type === 'image').map(asset => (
@@ -647,7 +647,7 @@ const ShowcaseSection = () => (
               <div className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-lg">
                 <Globe size={20} className="text-lg-red" />
               </div>
-              <h3 className="text-xl md:text-2xl font-bold">Web Portfolios</h3>
+              <h3 className="text-xl md:text-2xl font-bold text-zinc-300">Web Portfolios</h3>
             </div>
             <div className="grid grid-cols-1 gap-6">
               {ASSETS.filter(a => a.type === 'web').map(asset => (
