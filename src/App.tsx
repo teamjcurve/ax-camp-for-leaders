@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useScroll, useTransform, useMotionValue, animate, AnimatePresence } from 'motion/react';
+import { motion, useScroll, useTransform, useMotionValue, useSpring, animate, AnimatePresence } from 'motion/react';
 import { JOURNEY_MODULES, ASSETS, AGENTS, PADLET_LINKS } from './constants';
 import { VideoCard, AudioCard, ImageCard, WebCard } from './components/Cards';
 import { Sparkles, Brain, Database, ArrowRight, Quote, Globe, X, ExternalLink, Play } from 'lucide-react';
@@ -201,18 +201,30 @@ const PadletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 );
 
 const MouseFollower = () => {
-  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = React.useState(false);
+  const rawX = useMotionValue(-100);
+  const rawY = useMotionValue(-100);
+
+  const innerX = useSpring(rawX, { damping: 30, stiffness: 300, mass: 0.05 });
+  const innerY = useSpring(rawY, { damping: 30, stiffness: 300, mass: 0.05 });
+  const outerX = useSpring(rawX, { damping: 40, stiffness: 150, mass: 0.15 });
+  const outerY = useSpring(rawY, { damping: 40, stiffness: 150, mass: 0.15 });
+
+  const innerXOffset = useTransform(innerX, v => v - 12);
+  const innerYOffset = useTransform(innerY, v => v - 12);
+  const outerXOffset = useTransform(outerX, v => v - 96);
+  const outerYOffset = useTransform(outerY, v => v - 96);
 
   React.useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      rawX.set(e.clientX);
+      rawY.set(e.clientY);
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => {
       window.removeEventListener('resize', checkMobile);
       window.removeEventListener('mousemove', handleMouseMove);
@@ -226,20 +238,12 @@ const MouseFollower = () => {
       {/* Core soft glow */}
       <motion.div
         className="fixed top-0 left-0 w-6 h-6 bg-lg-red/40 rounded-full pointer-events-none z-[10000] blur-[2px] shadow-[0_0_20px_rgba(165,0,52,0.8),0_0_40px_rgba(165,0,52,0.4)]"
-        animate={{
-          x: mousePos.x - 12,
-          y: mousePos.y - 12,
-        }}
-        transition={{ type: 'spring', damping: 30, stiffness: 250, mass: 0.1 }}
+        style={{ x: innerXOffset, y: innerYOffset }}
       />
       {/* Outer atmospheric bleed */}
       <motion.div
         className="fixed top-0 left-0 w-48 h-48 bg-lg-red/15 rounded-full blur-[60px] pointer-events-none z-[9999]"
-        animate={{
-          x: mousePos.x - 96,
-          y: mousePos.y - 96,
-        }}
-        transition={{ type: 'spring', damping: 40, stiffness: 150, mass: 0.2 }}
+        style={{ x: outerXOffset, y: outerYOffset }}
       />
     </>
   );
@@ -247,8 +251,16 @@ const MouseFollower = () => {
 
 const SpotlightText = ({ text }: { text: string }) => {
   const textRef = React.useRef<HTMLDivElement>(null);
-  const [distance, setDistance] = React.useState(1000);
   const [isMobile, setIsMobile] = React.useState(false);
+  const dx = useMotionValue(1000);
+  const dy = useMotionValue(1000);
+
+  const intensity = useTransform([dx, dy] as any, ([x, y]: number[]) =>
+    Math.max(0, 1 - Math.sqrt(x * x + y * y) / 180)
+  );
+  const glowFilter = useTransform(intensity, v =>
+    `drop-shadow(0 0 ${v * 10}px rgba(165,0,52,0.7))`
+  );
 
   React.useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -258,34 +270,30 @@ const SpotlightText = ({ text }: { text: string }) => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!textRef.current) return;
       const rect = textRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const d = Math.sqrt(Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2));
-      setDistance(d);
+      dx.set(e.clientX - (rect.left + rect.width / 2));
+      dy.set(e.clientY - (rect.top + rect.height / 2));
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => {
       window.removeEventListener('resize', checkMobile);
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
-  const intensity = isMobile ? 1 : Math.max(0, 1 - distance / 200);
-
   return (
     <div ref={textRef} className="relative">
       <h1 className="text-sm font-black tracking-tighter leading-none text-zinc-300 dark:text-zinc-700">
         {text}
       </h1>
-      <h1 
-        className="absolute top-0 left-0 text-sm font-black tracking-tighter leading-none text-lg-red transition-opacity duration-150 pointer-events-none"
-        style={{ 
-          opacity: intensity,
-          filter: isMobile ? 'none' : `drop-shadow(0 0 ${intensity * 8}px rgba(165,0,52,0.5))`
+      <motion.h1
+        className="absolute top-0 left-0 text-sm font-black tracking-tighter leading-none text-lg-red pointer-events-none"
+        style={{
+          opacity: isMobile ? 1 : intensity,
+          filter: isMobile ? 'none' : glowFilter,
         }}
       >
         {text}
-      </h1>
+      </motion.h1>
     </div>
   );
 };
