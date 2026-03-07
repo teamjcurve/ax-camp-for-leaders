@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring, animate, An
 import { JOURNEY_MODULES, ASSETS, AGENTS, PADLET_LINKS } from './constants';
 import { VideoCard, AudioCard, ImageCard, WebCard } from './components/Cards';
 import { Sparkles, Brain, Database, ArrowRight, Quote, Globe, X, ExternalLink, Play } from 'lucide-react';
+import Spline from '@splinetool/react-spline';
 
 const NavItem: React.FC<{ item: string }> = ({ item }) => {
   const [isHovered, setIsHovered] = React.useState(false);
@@ -300,18 +301,23 @@ const SpotlightText = ({ text }: { text: string }) => {
 
 const InteractiveBackgroundTitle = ({ scrollYProgress }: { scrollYProgress: any }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = React.useState({ x: -1000, y: -1000 });
+  const mouseX = useMotionValue(-1000);
+  const mouseY = useMotionValue(-1000);
+
+  // useTransform으로 mask 문자열을 React 렌더링 없이 직접 업데이트
+  const maskImage = useTransform(
+    [mouseX, mouseY] as any,
+    ([x, y]: number[]) => `radial-gradient(circle 200px at ${x}px ${y}px, black 0%, transparent 100%)`
+  );
 
   React.useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
-      setMousePos({ 
-        x: e.clientX - rect.left, 
-        y: e.clientY - rect.top 
-      });
+      mouseX.set(e.clientX - rect.left);
+      mouseY.set(e.clientY - rect.top);
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
@@ -319,8 +325,8 @@ const InteractiveBackgroundTitle = ({ scrollYProgress }: { scrollYProgress: any 
     <div ref={containerRef} className="absolute inset-0 flex items-center justify-center z-[-1] pointer-events-none pb-20 md:pb-32">
       <div className="relative">
         {/* Base Layer (Subtle Gray) */}
-        <motion.h2 
-          style={{ 
+        <motion.h2
+          style={{
             opacity: useTransform(scrollYProgress, [0, 0.4, 0.8], [0.15, 0.2, 0.05]),
             scale: useTransform(scrollYProgress, [0, 1], [1, 1.2]),
             color: "rgba(255, 255, 255, 0.2)",
@@ -330,15 +336,15 @@ const InteractiveBackgroundTitle = ({ scrollYProgress }: { scrollYProgress: any 
         >
           LG AX CAMP
         </motion.h2>
-        
+
         {/* Interactive Spotlight Layer (LG Red) */}
-        <motion.h2 
-          style={{ 
+        <motion.h2
+          style={{
             opacity: useTransform(scrollYProgress, [0, 0.4, 0.8], [0.6, 0.8, 0.2]),
             scale: useTransform(scrollYProgress, [0, 1], [1, 1.2]),
             color: "#A50034",
-            WebkitMaskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
-            maskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
+            WebkitMaskImage: maskImage,
+            maskImage: maskImage,
             filter: useTransform(scrollYProgress, [0, 0.6], ["blur(0px)", "blur(8px)"]),
           }}
           className="absolute top-0 left-0 w-full text-[15vw] font-black tracking-tighter uppercase leading-none text-center select-none"
@@ -396,17 +402,16 @@ const RobotStage = () => {
         {/* Background Title with Mouse Interaction */}
         <InteractiveBackgroundTitle scrollYProgress={scrollYProgress} />
 
-        <motion.div 
+        <motion.div
           style={{ scale, opacity, y }}
           className="absolute inset-0 z-0"
         >
-          <iframe 
-            src='https://my.spline.design/nexbotrobotcharacterconcept-AwIw7KZBfTCOYkorUHYnM6Ee/' 
-            frameBorder='0' 
-            width='100%' 
-            height='100%'
-            className="origin-center"
-          ></iframe>
+          <React.Suspense fallback={null}>
+            <Spline
+              scene="https://prod.spline.design/nexbotrobotcharacterconcept-AwIw7KZBfTCOYkorUHYnM6Ee/scene.splinecode"
+              style={{ width: '100%', height: '100%' }}
+            />
+          </React.Suspense>
         </motion.div>
         <div className="absolute bottom-0 left-0 w-full h-48 md:h-64 bg-gradient-to-t from-lg-dark to-transparent z-10" />
         {/* Spline Logo Mask */}
