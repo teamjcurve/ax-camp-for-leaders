@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring, animate, An
 import { JOURNEY_MODULES, ASSETS, AGENTS, PADLET_LINKS } from './constants';
 import { VideoCard, AudioCard, ImageCard, WebCard } from './components/Cards';
 import { Sparkles, Brain, Database, ArrowRight, Quote, Globe, X, ExternalLink, Play } from 'lucide-react';
-import Spline from '@splinetool/react-spline';
 
 const NavItem: React.FC<{ item: string }> = ({ item }) => {
   const [isHovered, setIsHovered] = React.useState(false);
@@ -406,12 +405,13 @@ const RobotStage = () => {
           style={{ scale, opacity, y }}
           className="absolute inset-0 z-0"
         >
-          <React.Suspense fallback={null}>
-            <Spline
-              scene="https://prod.spline.design/nexbotrobotcharacterconcept-AwIw7KZBfTCOYkorUHYnM6Ee/scene.splinecode"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </React.Suspense>
+          <iframe
+            src='https://my.spline.design/nexbotrobotcharacterconcept-AwIw7KZBfTCOYkorUHYnM6Ee/'
+            frameBorder='0'
+            width='100%'
+            height='100%'
+            className="origin-center"
+          />
         </motion.div>
         <div className="absolute bottom-0 left-0 w-full h-48 md:h-64 bg-gradient-to-t from-lg-dark to-transparent z-10" />
         {/* Spline Logo Mask */}
