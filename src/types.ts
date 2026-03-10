@@ -19,4 +19,6 @@ export interface Agent {
   name: string;
   role: string;
   description: string;
+  url?: string;
+  avatar?: string;
 }

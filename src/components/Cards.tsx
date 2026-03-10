@@ -8,34 +8,38 @@ interface CardProps {
   onClick?: () => void;
 }
 
-export const VideoCard: React.FC<CardProps> = ({ asset, onClick }) => (
-  <motion.div 
-    whileHover={{ scale: 1.02 }}
-    onClick={onClick}
-    className="group relative overflow-hidden rounded-2xl bg-lg-dark aspect-video cursor-pointer"
-  >
-    <img 
-      src={asset.thumbnail} 
-      alt={asset.title} 
-      className="h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
-      referrerPolicy="no-referrer"
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex flex-col justify-end">
-      <div className="flex items-center gap-2 mb-2">
-        <div className="p-2 bg-lg-red rounded-full shadow-[0_0_15px_rgba(165,0,52,0.5)]">
-          <Play size={16} fill="white" className="text-white" />
+export const VideoCard: React.FC<CardProps> = ({ asset, onClick }) => {
+  return (
+    <motion.div 
+      whileHover={{ scale: 1.02 }}
+      onClick={onClick}
+      className="group relative overflow-hidden rounded-2xl bg-lg-dark aspect-video cursor-pointer"
+    >
+      <video 
+        src={asset.url} 
+        muted 
+        loop 
+        autoPlay 
+        playsInline
+        className="h-full w-full object-cover opacity-60 transition-opacity duration-500 group-hover:opacity-100"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex flex-col justify-end">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="p-2 bg-lg-red rounded-full shadow-[0_0_15px_rgba(165,0,52,0.5)]">
+            <Play size={16} fill="white" className="text-white" />
+          </div>
+          <span className="text-xs font-semibold text-white/80 uppercase tracking-widest">Strategy Video</span>
         </div>
-        <span className="text-xs font-semibold text-white/80 uppercase tracking-widest">Strategy Video</span>
+        <h3 className="text-xl font-bold text-white mb-1">{asset.title}</h3>
+        <p className="text-sm text-white/60 line-clamp-2 mb-4">{asset.description}</p>
+        <div className="flex items-center gap-2 text-xs text-white/40">
+          <User size={12} />
+          <span>{asset.author}</span>
+        </div>
       </div>
-      <h3 className="text-xl font-bold text-white mb-1">{asset.title}</h3>
-      <p className="text-sm text-white/60 line-clamp-2 mb-4">{asset.description}</p>
-      <div className="flex items-center gap-2 text-xs text-white/40">
-        <User size={12} />
-        <span>{asset.author}</span>
-      </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 export const AudioCard: React.FC<CardProps> = ({ asset, onClick }) => {
   return (
@@ -45,16 +49,8 @@ export const AudioCard: React.FC<CardProps> = ({ asset, onClick }) => {
       className="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all cursor-pointer"
     >
       <div className="flex gap-6 items-center">
-        <div className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden group">
-          <img 
-            src={asset.thumbnail} 
-            alt={asset.title} 
-            className="w-full h-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <Play size={24} fill="white" className="text-white" />
-          </div>
+        <div className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden group bg-lg-red/10 flex items-center justify-center border border-lg-red/20">
+          <Play size={32} fill="#A50034" className="text-lg-red group-hover:scale-110 transition-transform" />
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
@@ -81,12 +77,12 @@ export const ImageCard: React.FC<CardProps> = ({ asset, onClick }) => (
   <motion.div 
     whileHover={{ scale: 1.02 }}
     onClick={onClick}
-    className="group relative overflow-hidden rounded-2xl bg-zinc-100 aspect-square cursor-pointer"
+    className="group relative overflow-hidden rounded-2xl bg-zinc-200 dark:bg-zinc-800 aspect-square cursor-pointer"
   >
     <img 
       src={asset.thumbnail} 
       alt={asset.title} 
-      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+      className="h-full w-full object-contain p-2 transition-transform duration-700 group-hover:scale-105"
       referrerPolicy="no-referrer"
     />
     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
@@ -112,11 +108,11 @@ export const WebCard: React.FC<CardProps> = ({ asset, onClick }) => (
     onClick={onClick}
     className="group bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden cursor-pointer"
   >
-    <div className="aspect-video relative overflow-hidden">
+    <div className="aspect-video relative overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
       <img 
         src={asset.thumbnail} 
         alt={asset.title} 
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
         referrerPolicy="no-referrer"
       />
       <div className="absolute top-4 right-4 p-2 bg-white/90 dark:bg-black/90 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
