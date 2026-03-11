@@ -124,7 +124,7 @@ const Header = ({ onOpenModal, mouseX, mouseY }: { onOpenModal: () => void, mous
           <div className="flex flex-col items-end gap-1.5">
             <div className="flex items-center gap-2 mr-1">
               <div className="w-8 h-px bg-gradient-to-r from-transparent to-white/20" />
-              <p className="text-[9px] text-white/40 font-bold tracking-[0.15em] uppercase">Archive Showcase</p>
+              <p className="text-[9px] text-white/40 font-bold tracking-[0.15em] uppercase">전체 과정 살펴보기</p>
             </div>
             <button 
               onClick={onOpenModal}
