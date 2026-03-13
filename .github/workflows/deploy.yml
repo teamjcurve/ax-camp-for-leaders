@@ -27,6 +27,8 @@ jobs:
       - run: npm install
 
       - run: npm run build
+        env:
+          VITE_AUTH_API_URL: ${{ secrets.VITE_AUTH_API_URL }}
 
       - uses: actions/upload-pages-artifact@v3
         with:

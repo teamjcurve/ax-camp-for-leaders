@@ -4,6 +4,8 @@ import { JOURNEY_MODULES, ASSETS, AGENTS, PADLET_LINKS } from './constants';
 import { VideoCard, AudioCard, ImageCard, WebCard } from './components/Cards';
 import { Sparkles, Brain, Database, ArrowRight, Quote, Globe, X, ExternalLink, Play, Music, Eye } from 'lucide-react';
 import { Asset } from './types';
+import { useAuth } from './hooks/useAuth';
+import { LoginScreen } from './components/LoginScreen';
 
 const NavItem: React.FC<{ item: string }> = ({ item }) => {
   const [isHovered, setIsHovered] = React.useState(false);
@@ -896,6 +898,7 @@ const Footer = () => (
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const { isAuthenticated, isLoading, error, login } = useAuth();
 
   // Unified high-performance mouse tracking
   const mouseX = useSpring(0, { damping: 25, stiffness: 150, mass: 0.5 });
@@ -909,7 +912,7 @@ export default function App() {
       mouseY.set(e.clientY);
       glowX.set(e.clientX);
       glowY.set(e.clientY);
-      
+
       // Sync to CSS variables for non-React components or complex masks
       document.documentElement.style.setProperty('--raw-mouse-x', `${e.clientX}px`);
       document.documentElement.style.setProperty('--raw-mouse-y', `${e.clientY}px`);
@@ -917,6 +920,18 @@ export default function App() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-lg-red border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginScreen onLogin={login} error={error} isLoading={isLoading} />;
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white selection:bg-lg-red selection:text-white">
