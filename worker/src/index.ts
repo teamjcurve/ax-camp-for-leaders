@@ -66,10 +66,10 @@ export default {
 
     if (url.pathname === '/api/login' && request.method === 'POST') {
       try {
-        const body = (await request.json()) as { id?: string; password?: string; role?: string };
-        const { id, password, role } = body;
+        const body = (await request.json()) as { id?: string; password?: string };
+        const { id, password } = body;
 
-        if (!id || !password || !role || !['internal', 'external'].includes(role)) {
+        if (!id || !password) {
           return Response.json({ error: 'Invalid request' }, { status: 400, headers });
         }
 
@@ -78,13 +78,16 @@ export default {
           external: { id: env.EXTERNAL_ID, pw: env.EXTERNAL_PW },
         };
 
-        const cred = credentials[role];
-        if (id !== cred.id || password !== cred.pw) {
+        const matchedRole = Object.entries(credentials).find(
+          ([, cred]) => id === cred.id && password === cred.pw,
+        )?.[0];
+
+        if (!matchedRole) {
           return Response.json({ error: 'Invalid credentials' }, { status: 401, headers });
         }
 
-        const token = await createToken(role, env.TOKEN_SECRET);
-        return Response.json({ token, role }, { headers });
+        const token = await createToken(matchedRole, env.TOKEN_SECRET);
+        return Response.json({ token, role: matchedRole }, { headers });
       } catch {
         return Response.json({ error: 'Invalid request body' }, { status: 400, headers });
       }

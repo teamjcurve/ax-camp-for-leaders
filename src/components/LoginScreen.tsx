@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
-type Role = 'internal' | 'external';
-
 interface LoginScreenProps {
-  onLogin: (id: string, password: string, role: Role) => Promise<void>;
+  onLogin: (id: string, password: string) => Promise<void>;
   error: string | null;
   isLoading: boolean;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, error, isLoading }) => {
-  const [role, setRole] = useState<Role>('internal');
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!id.trim() || !password.trim() || isLoading) return;
-    onLogin(id.trim(), password, role);
+    onLogin(id.trim(), password);
   };
 
   return (
@@ -41,35 +38,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, error, isLoad
       >
         {/* Card */}
         <div className="bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl rounded-3xl p-8 md:p-10">
-          {/* Logo & Title */}
+          {/* Title */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-lg-red/10 border border-lg-red/20 mb-5">
-              <span className="text-2xl font-black text-lg-red">AX</span>
-            </div>
             <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
               AX Camp for Leaders
             </h1>
             <p className="text-sm text-zinc-500 mt-2 font-medium">
               접근하려면 로그인이 필요합니다
             </p>
-          </div>
-
-          {/* Role Toggle */}
-          <div className="flex gap-2 mb-6 p-1 bg-zinc-900/50 rounded-xl border border-white/5">
-            {(['internal', 'external'] as const).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r)}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
-                  role === r
-                    ? 'bg-lg-red text-white shadow-lg shadow-lg-red/20'
-                    : 'text-zinc-500 hover:text-zinc-300'
-                }`}
-              >
-                {r === 'internal' ? '내부자' : '외부자'}
-              </button>
-            ))}
           </div>
 
           {/* Form */}
