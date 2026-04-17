@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/chan/workspace/ax-camp-for-leaders && if [ -n \"$(git status --porcelain)\" ]; then FILES=$(git status --porcelain | awk '{print $NF}' | head -5 | paste -sd ',' -); git add -A && git commit -m \"Auto: update ${FILES}\" >/dev/null 2>&1 || true; fi",
+            "timeout": 30,
+            "statusMessage": "Auto-committing changes..."
+          }
+        ]
+      }
+    ]
+  }
+}
