@@ -5,8 +5,8 @@ interface LoginScreenProps {
   onLogin: (id: string, password: string) => Promise<void>;
   error: string | null;
   isLoading: boolean;
-}
-
+} 
+     
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, error, isLoading }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
